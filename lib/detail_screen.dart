@@ -19,7 +19,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    // print(widget.pokemonDetail);
+    print(widget.pokemonDetail);
   }
 
   @override

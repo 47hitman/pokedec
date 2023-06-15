@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'detail_screen.dart';
-// import 'package:pokemon/detail_screen.dart';
-// import 'package:pokemon/pokedex.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,13 +14,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List pokedex;
-
+  late List<dynamic> pokedex = [];
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
-    if (mounted) {
-      fetchPokemonData();
+    fetchPokemonData();
+  }
+
+  void fetchPokemonData() async {
+    var url = Uri.https('raw.githubusercontent.com',
+        '/Biuni/PokemonGO-Pokedex/master/pokedex.json');
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        setState(() {
+          pokedex = data['pokemon'];
+          isLoading = false;
+        });
+        print(pokedex);
+      } else {
+        print('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -69,8 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(children: [
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
           Positioned(
             top: -50,
             right: -50,
@@ -81,74 +98,110 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Positioned(
-              top: 100,
-              left: 20,
-              child: Text(
-                'Pokedex',
-                style: TextStyle(
-                  color: Colors.black.withOpacity(0.6),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
-              )),
+            top: 100,
+            left: 20,
+            child: Text(
+              'Pokedex',
+              style: TextStyle(
+                color: Colors.black.withOpacity(0.6),
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+              ),
+            ),
+          ),
           Positioned(
             top: 150,
             bottom: 0,
             width: width,
             child: Column(
               children: [
-                // ignore: unnecessary_null_comparison
-                pokedex != null
-                    ? Expanded(
-                        child: GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2, childAspectRatio: 1.4),
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: pokedex.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 5),
-                                child: InkWell(
-                                  child: SafeArea(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: getColorForType(
-                                              pokedex[index]['type'][0]),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(25))),
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                            bottom: -10,
-                                            right: -10,
-                                            child: Image.asset(
-                                              'images/pokeball.png',
+                Expanded(
+                  child: pokedex.isNotEmpty
+                      ? GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, childAspectRatio: 1.4),
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: pokedex.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 5),
+                              child: InkWell(
+                                child: SafeArea(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: getColorForType(
+                                          pokedex[index]['type'][0]),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(25)),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          bottom: -10,
+                                          right: -10,
+                                          child: Image.asset(
+                                            'images/pokeball.png',
+                                            height: 100,
+                                            fit: BoxFit.fitHeight,
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 5,
+                                          right: 5,
+                                          child: Hero(
+                                            tag: index,
+                                            child: CachedNetworkImage(
+                                              imageUrl: pokedex[index]['img'],
                                               height: 100,
                                               fit: BoxFit.fitHeight,
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
                                             ),
                                           ),
-                                          Positioned(
-                                            bottom: 5,
-                                            right: 5,
-                                            child: Hero(
-                                              tag: index,
-                                              child: CachedNetworkImage(
-                                                  imageUrl: pokedex[index]
-                                                      ['img'],
-                                                  height: 100,
-                                                  fit: BoxFit.fitHeight,
-                                                  placeholder: (context, url) =>
-                                                      const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      )),
+                                        ),
+                                        Positioned(
+                                          top: 55,
+                                          left: 15,
+                                          child: Container(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0,
+                                                  right: 10,
+                                                  top: 5,
+                                                  bottom: 5),
+                                              child: Text(
+                                                pokedex[index]['type'][0],
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  shadows: [
+                                                    BoxShadow(
+                                                      color: Colors.blueGrey,
+                                                      offset: Offset(0, 0),
+                                                      spreadRadius: 1.0,
+                                                      blurRadius: 15,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(20)),
+                                              color: getColorForInfo(
+                                                  pokedex[index]['type'][0]),
                                             ),
                                           ),
+                                        ),
+                                        if (pokedex[index]['type'].length > 1)
                                           Positioned(
-                                            top: 55,
+                                            top: 90,
                                             left: 15,
                                             child: Container(
                                               child: Padding(
@@ -158,150 +211,110 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     top: 5,
                                                     bottom: 5),
                                                 child: Text(
-                                                  pokedex[index]['type'][0],
+                                                  pokedex[index]['type']
+                                                              .length >
+                                                          1
+                                                      ? pokedex[index]['type']
+                                                          [1]
+                                                      : '',
                                                   style: const TextStyle(
-                                                      color: Colors.white,
-                                                      shadows: [
-                                                        BoxShadow(
-                                                            color:
-                                                                Colors.blueGrey,
-                                                            offset:
-                                                                Offset(0, 0),
-                                                            spreadRadius: 1.0,
-                                                            blurRadius: 15)
-                                                      ]),
-                                                ),
-                                              ),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(20)),
-                                                  color: getColorForInfo(
-                                                      pokedex[index]['type']
-                                                          [0])),
-                                            ),
-                                          ),
-                                          pokedex[index]['type'].length > 1
-                                              ? Positioned(
-                                                  top: 90,
-                                                  left: 15,
-                                                  child: Container(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10.0,
-                                                              right: 10,
-                                                              top: 5,
-                                                              bottom: 5),
-                                                      child: Text(
-                                                        pokedex[index]['type']
-                                                                    .length >
-                                                                1
-                                                            ? pokedex[index]
-                                                                ['type'][1]
-                                                            : '',
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          shadows: [
-                                                            BoxShadow(
-                                                              color: Colors
-                                                                  .blueGrey,
-                                                              offset:
-                                                                  Offset(0, 0),
-                                                              spreadRadius: 1.0,
-                                                              blurRadius: 15,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                    .all(
-                                                                Radius.circular(
-                                                                    20)),
-                                                        color: getColorForInfo(
-                                                            pokedex[index]
-                                                                ['type'][0])),
-                                                  ),
-                                                )
-                                              : Container(),
-                                          Positioned(
-                                            top: 30,
-                                            left: 15,
-                                            child: Text(
-                                              pokedex[index]['name'],
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
-                                                  color: Colors.white,
-                                                  shadows: [
-                                                    BoxShadow(
+                                                    color: Colors.white,
+                                                    shadows: [
+                                                      BoxShadow(
                                                         color: Colors.blueGrey,
                                                         offset: Offset(0, 0),
                                                         spreadRadius: 1.0,
-                                                        blurRadius: 15)
-                                                  ]),
+                                                        blurRadius: 15,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(20)),
+                                                color: getColorForInfo(
+                                                    pokedex[index]['type'][0]),
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        Positioned(
+                                          top: 30,
+                                          left: 15,
+                                          child: Text(
+                                            pokedex[index]['name'],
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                              shadows: [
+                                                BoxShadow(
+                                                  color: Colors.blueGrey,
+                                                  offset: Offset(0, 0),
+                                                  spreadRadius: 1.0,
+                                                  blurRadius: 15,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => DetailScreen(
-                                                  heroTag: index,
-                                                  pokemonDetail: pokedex[index],
-                                                  color: pokedex[index]['type']
-                                                              [0] ==
-                                                          "Grass"
-                                                      ? Colors.greenAccent
-                                                      : pokedex[index]['type']
-                                                                  [0] ==
-                                                              "Fire"
-                                                          ? Colors.redAccent
-                                                          : pokedex[index]['type']
-                                                                      [0] ==
-                                                                  "Water"
-                                                              ? Colors.blue
-                                                              : pokedex[index]['type']
-                                                                          [0] ==
-                                                                      "Poison"
-                                                                  ? Colors
-                                                                      .deepPurpleAccent
-                                                                  : pokedex[index]['type'][0] ==
-                                                                          "Electric"
-                                                                      ? Colors
-                                                                          .amber
-                                                                      : pokedex[index]['type'][0] ==
-                                                                              "Rock"
-                                                                          ? Colors
-                                                                              .grey
-                                                                          : pokedex[index]['type'][0] == "Ground"
-                                                                              ? Colors.brown
-                                                                              : pokedex[index]['type'][0] == "Psychic"
-                                                                                  ? Colors.indigo
-                                                                                  : pokedex[index]['type'][0] == "Fighting"
-                                                                                      ? Colors.orange
-                                                                                      : pokedex[index]['type'][0] == "Bug"
-                                                                                          ? Colors.lightGreenAccent
-                                                                                          : pokedex[index]['type'][0] == "Ghost"
-                                                                                              ? Colors.deepPurple
-                                                                                              : pokedex[index]['type'][0] == "Normal"
-                                                                                                  ? Colors.white70
-                                                                                                  : Colors.pink,
-                                                )));
-                                  },
                                 ),
-                              );
-                            }))
-                    : const Center(
-                        child: CircularProgressIndicator(),
-                      )
+                                onTap: () {
+                                  Color getColorForType(String type) {
+                                    switch (type) {
+                                      case "Grass":
+                                        return Colors.greenAccent;
+                                      case "Fire":
+                                        return Colors.redAccent;
+                                      case "Water":
+                                        return Colors.blue;
+                                      case "Poison":
+                                        return Colors.deepPurpleAccent;
+                                      case "Electric":
+                                        return Colors.amber;
+                                      case "Rock":
+                                        return Colors.grey;
+                                      case "Ground":
+                                        return Colors.brown;
+                                      case "Psychic":
+                                        return Colors.indigo;
+                                      case "Fighting":
+                                        return Colors.orange;
+                                      case "Bug":
+                                        return Colors.lightGreenAccent;
+                                      case "Ghost":
+                                        return Colors.deepPurple;
+                                      case "Normal":
+                                        return Colors.white70;
+                                      default:
+                                        return Colors.pink;
+                                    }
+                                  }
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => DetailScreen(
+                                        heroTag: index,
+                                        pokemonDetail: pokedex[index],
+                                        color: getColorForType(
+                                            pokedex[index]['type'][0]),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        )
+                      : const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                ),
               ],
             ),
           ),
@@ -312,23 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
               width: width,
             ),
           ),
-        ]));
-  }
-
-  void fetchPokemonData() {
-    var url = Uri.https('raw.githubusercontent.com',
-        '/Biuni/PokemonGO-Pokedex/master/pokedex.json');
-    http.get(url).then((value) {
-      if (value.statusCode == 200) {
-        var data = jsonDecode(value.body);
-        pokedex = data['pokemon'];
-
-        setState(() {});
-
-        // print(pokedex);
-      }
-    }).catchError((e) {
-      // print(e);
-    });
+        ],
+      ),
+    );
   }
 }
