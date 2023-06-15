@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'splash_screen.dart'; // Import the splash screen file
 import 'home_screen.dart';
+import 'splashh_screen.dart';
 
 void main() {
   runApp(Pokemon());

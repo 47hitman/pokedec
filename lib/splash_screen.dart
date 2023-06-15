@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.white, // Set your desired background color
       body: Center(
         child: Image.asset(
-              'images/pokeball.png'), // Replace with your splash image asset path
+            'images/pokeball.png'), // Replace with your splash image asset path
       ),
     );
   }
