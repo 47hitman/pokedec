@@ -1,4 +1,4 @@
-// ignore_for_file: sort_child_properties_last
+// ignore_for_file: sort_child_properties_last, use_key_in_widget_constructors, library_private_types_in_public_api, sized_box_for_whitespace
 
 import 'dart:convert';
 
@@ -20,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (mounted) {
       fetchPokemonData();
@@ -67,12 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
-    Color _greenColor = const Color(0xff2a9d8f);
-    Color _redColor = const Color(0xffe76f51);
-    Color _blueColor = const Color(0xff37A5C6);
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -103,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: width,
             child: Column(
               children: [
+                // ignore: unnecessary_null_comparison
                 pokedex != null
                     ? Expanded(
                         child: GridView.builder(
@@ -330,10 +325,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
         setState(() {});
 
-        print(pokedex);
+        // print(pokedex);
       }
     }).catchError((e) {
-      print(e);
+      // print(e);
     });
   }
 }

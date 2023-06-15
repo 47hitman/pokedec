@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api, prefer_const_constructors, prefer_interpolation_to_compose_strings, sort_child_properties_last, avoid_unnecessary_containers
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +18,8 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    print(widget.pokemonDetail);
+    // print(widget.pokemonDetail);
   }
 
   @override
@@ -35,7 +36,7 @@ class _DetailScreenState extends State<DetailScreen> {
             top: 20,
             left: 5,
             child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
                   size: 20,
@@ -115,7 +116,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: width * 0.3,
                             child: Text(
                               'Name',
@@ -137,7 +138,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: width * 0.3,
                             child: Text(
                               'Height',
@@ -159,7 +160,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: width * 0.3,
                             child: Text(
                               'Weight',
@@ -181,7 +182,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: width * 0.3,
                             child: Text(
                               'Spawn Time',
@@ -203,7 +204,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: width * 0.3,
                             child: Text(
                               'Weakness',
@@ -225,7 +226,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: width * 0.3,
                             child: Text(
                               'Pre Evolution',
@@ -273,7 +274,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: width * 0.3,
                             child: Text(
                               'Next Evolution',
